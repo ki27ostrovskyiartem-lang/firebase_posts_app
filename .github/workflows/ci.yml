@@ -48,7 +48,7 @@ jobs:
         run: |
           for i in 1 2 3; do
             echo "=== Прогін $i ==="
-            maestro test e2e/
+            maestro test --headless e2e/
           done
       - name: Звіти Maestro (при збої)
         if: failure()
