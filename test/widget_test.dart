@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:firebase_posts_app/repo/auth_repository.dart';
+import 'package:firebase_posts_app/auth/auth_service.dart';
 
 void main() {
   test('AuthException зберігає повідомлення', () {

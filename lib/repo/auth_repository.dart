@@ -1,12 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 
-/// Помилка автентифікації з повідомленням для користувача.
-class AuthException implements Exception {
-  final String message;
-  AuthException(this.message);
-  @override
-  String toString() => message;
-}
+import '../auth/auth_service.dart';
+
+export '../auth/auth_service.dart' show AuthException;
 
 /// Обгортка над FirebaseAuth.
 class AuthRepository {
