@@ -1,0 +1,15 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /posts/{postId} {
+      // читати можуть лише автентифіковані користувачі
+      allow read: if request.auth != null;
+      // створити пост можна лише від свого імені
+      allow create: if request.auth != null
+                    && request.resource.data.ownerId == request.auth.uid;
+      // змінювати і видаляти може лише автор
+      allow update, delete: if request.auth != null
+                            && request.auth.uid == resource.data.ownerId;
+    }
+  }
+}

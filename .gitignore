@@ -1,0 +1,12 @@
+build/
+.dart_tool/
+.idea/
+*.iml
+.env
+lib/firebase_options.dart
+firebase.json
+.firebaserc
+
+# службові файли Flutter із локальними шляхами
+.flutter-plugins
+.flutter-plugins-dependencies
