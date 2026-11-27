@@ -1,7 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'auth/auth_cubit.dart';
+import 'auth/firebase_auth_service.dart';
 import 'firebase_options.dart';
 import 'repo/auth_repository.dart';
 import 'screens/auth_screen.dart';
@@ -22,8 +25,7 @@ class PostsApp extends StatelessWidget {
     final auth = AuthRepository();
     return MaterialApp(
       title: 'Firebase Posts',
-      theme: ThemeData(
-          colorSchemeSeed: Colors.deepOrange, useMaterial3: true),
+      theme: ThemeData(colorSchemeSeed: Colors.deepOrange, useMaterial3: true),
       home: StreamBuilder<User?>(
         stream: auth.authStateChanges(),
         builder: (context, snap) {
@@ -32,7 +34,10 @@ class PostsApp extends StatelessWidget {
                 body: Center(child: CircularProgressIndicator()));
           }
           return snap.data == null
-              ? AuthScreen(auth: auth)
+              ? BlocProvider(
+                  create: (_) => AuthCubit(FirebaseAuthService(auth)),
+                  child: const AuthScreen(),
+                )
               : PostsScreen(auth: auth, user: snap.data!);
         },
       ),

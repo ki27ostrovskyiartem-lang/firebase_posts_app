@@ -1,0 +1,58 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  unit:
+    name: Unit-тести (кожен push)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - run: flutter test
+
+  e2e:
+    name: E2E Maestro (лише pull request)
+    if: github.event_name == 'pull_request'
+    needs: unit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - run: flutter pub get
+      - name: Збірка web-версії для e2e (без Firebase)
+        run: flutter build web -t lib/main_e2e.dart
+      - name: Запуск локального сервера
+        run: |
+          python3 -m http.server 8080 --directory build/web &
+          sleep 3
+          curl -sf http://localhost:8080 > /dev/null
+      - name: Встановлення Maestro
+        run: |
+          curl -Ls "https://get.maestro.mobile.dev" | bash
+          echo "$HOME/.maestro/bin" >> "$GITHUB_PATH"
+      - name: Запуск e2e (3 рази підряд для перевірки на флакі)
+        run: |
+          for i in 1 2 3; do
+            echo "=== Прогін $i ==="
+            maestro test e2e/
+          done
+      - name: Звіти Maestro (при збої)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: maestro-report
+          path: ~/.maestro/tests

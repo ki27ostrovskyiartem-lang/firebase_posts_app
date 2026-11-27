@@ -1,0 +1,11 @@
+url: http://localhost:8080
+---
+# Сценарій 1: успішний вхід
+- launchApp
+- assertVisible: "Вхід"
+- tapOn: "Пошта"
+- inputText: "user@test.com"
+- tapOn: "Пароль"
+- inputText: "Test123!"
+- tapOn: "Увійти"
+- assertVisible: "Вітаємо, user@test.com"
